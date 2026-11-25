@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gestione Panettoni</title>
+<style>
+:root{--bg:#fff8f2;--card:#fff;--tx:#2b1a1a;--mu:#7a5f5f;--ac:#b3122b;--acx:#fff;--soft:#e6f2e8;--bd:#efdcd2;--ok:#1b7a3d;--bad:#c62828;--warn:#a86400;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#13201a;--card:#1c2d24;--tx:#f6efe6;--mu:#b9c4b6;--ac:#ff7a7a;--acx:#1a0d0d;--soft:#2c4535;--bd:#34503f;--ok:#7bc47f;--bad:#ff8a80;--warn:#ffb74d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#13201a;--card:#1c2d24;--tx:#f6efe6;--mu:#b9c4b6;--ac:#ff7a7a;--acx:#1a0d0d;--soft:#2c4535;--bd:#34503f;--ok:#7bc47f;--bad:#ff8a80;--warn:#ffb74d;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 -apple-system,Segoe UI,Roboto,Arial,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);border-bottom:1px solid var(--bd);padding:8px 14px}
+nav,.strip{display:flex;gap:6px;overflow-x:auto}.strip{margin-top:4px}
+nav button{flex:none;padding:8px 12px;border:0;border-radius:10px;background:var(--soft);color:var(--tx);font:inherit;font-weight:600;font-size:13px}
+.chip{flex:none;font-size:12px;background:var(--soft);border-radius:999px;padding:4px 9px;white-space:nowrap}.chip b{margin-left:5px}
+main{max-width:820px;margin:0 auto;padding:14px}
+h1{font-size:20px;margin:4px 0 2px;color:var(--ac)}h2{font-size:17px;margin:0 0 10px;color:var(--ac)}
+.sub,.meta{color:var(--mu);font-size:13px}.sub{margin:0 0 12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:14px}
+.tab{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 112px)}
+label{display:block;font-size:12px;color:var(--mu);margin-bottom:3px}
+input,select{width:100%;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font:inherit}
+input[type=checkbox]{width:auto}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.prod{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--bd)}.prod .n{flex:1}.prod small{display:block;font-size:12px}
+.st{display:flex;align-items:center;gap:6px}.st button{width:34px;height:34px;border-radius:50%;border:1px solid var(--bd);background:var(--soft);color:var(--tx);font-size:18px;line-height:1}.st span{min-width:22px;text-align:center;font-weight:700}
+.btn{width:100%;padding:12px;border:0;border-radius:12px;background:var(--ac);color:var(--acx);font:inherit;font-weight:700}
+.btn.s{width:auto;padding:7px 12px;background:var(--soft);color:var(--tx);font-weight:600;font-size:13px}.btn.s.pri{background:var(--ac);color:var(--acx)}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+.ord,.day{border-top:1px solid var(--bd);padding:10px 0}.day{background:var(--card)}
+.top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.nm{font-weight:700}
+.tag{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--soft);font-weight:700;white-space:nowrap}
+.items{margin:6px 0;font-size:13px}.money{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;margin:6px 0}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px;min-width:520px}
+th{font-size:11px;color:var(--mu);text-align:center;padding:4px}td{padding:6px 4px;border-top:1px solid var(--bd);text-align:center}td:first-child,th:first-child{text-align:left}
+.tot{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}.tot div{flex:1 1 30%;background:var(--soft);border-radius:12px;padding:10px;text-align:center;font-size:12px}.tot b{display:block;font-size:17px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;display:none;align-items:flex-end;justify-content:center}.ov.on{display:flex}
+.sheet{background:var(--card);width:100%;max-width:640px;max-height:92vh;overflow:auto;border-radius:16px 16px 0 0;padding:16px calc(16px) calc(16px + env(safe-area-inset-bottom,0px))}
+#cf{z-index:60;align-items:center}#cf .sheet{border-radius:16px;max-width:420px;margin:14px}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--ac);color:var(--acx);padding:9px 16px;border-radius:999px;font-size:13px;z-index:70;display:none}#toast.on{display:block}
+@media print{:root:root:root{--bg:#fff;--card:#fff;--tx:#000;--mu:#444;--bd:#999;--ac:#000;--soft:#eee}body>*:not(#ov){display:none!important}body::before,body::after{display:none}#ov{position:static;background:none;display:block}.sheet{max-height:none;overflow:visible;padding:0;border-radius:0}.np{display:none!important}}
+html,body{height:100%}body{height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+header{position:static;flex:none}
+main{flex:1;min-height:0;display:flex;flex-direction:column;max-width:none;margin:0;padding:6px 0 0}
+main>h1{font-size:17px;margin:2px 14px 0}main>.sub{margin:0 14px 6px;font-size:12px}
+#rail{flex:1;min-height:0;display:block;overflow:hidden;padding:4px 14px 14px;width:100%;max-width:860px;margin:0 auto}
+#rail>.tab{display:none;overflow-y:auto;margin:0;height:100%}
+#rail>.tab.on{display:block}
+nav{flex-wrap:wrap;overflow:visible}nav button{flex:1 1 auto;padding:7px 8px}
+nav button.on{background:var(--ac);color:var(--acx)}
+@media print{html,body{height:auto!important;overflow:visible!important;display:block!important}}
+</style></head><body>
+<header><nav id="nav"><button data-t="nuova">Ordine</button><button data-t="elenco">Elenco</button><button data-t="giorni">Ritiri</button><button data-t="vendita">Vendita</button><button data-t="produzione">Produzione</button><button data-t="resoconto">Resoconto</button><button data-t="archivio">Condividi</button><button data-t="stampa">Stampa</button><button data-t="backup">Backup</button></nav>
+<div class="meta" style="font-size:11px;margin-top:6px">Disponibili alla vendita</div><div class="strip" id="strip"></div></header>
+<main>
+<h1>🎄 Gestione panettoni</h1><p class="sub" id="status">Caricamento…</p>
+
+<div class="card tab" data-tab="nuova"><h2 id="otitle">Nuova prenotazione</h2>
+<div class="g2"><div><label>Nome</label><input type="text" id="nome"></div><div><label>Cognome</label><input type="text" id="cognome"></div></div>
+<div class="g2"><div><label>Telefono</label><input type="tel" id="tel"></div><div><label>Data ritiro</label><input type="date" id="data"></div></div>
+<div id="fo"></div><div class="meta" id="fot" style="margin:8px 0"></div>
+<div id="accw"><label>Acconto versato (€)</label><input type="number" min="0" step="0.01" id="oacc" inputmode="decimal"></div>
+<div class="row" style="margin-top:10px"><button class="btn" id="osave" style="flex:1">Salva prenotazione</button><button class="btn s" id="ocancel" style="display:none">Annulla modifica</button></div></div>
+
+<div class="card tab" data-tab="elenco"><h2>Elenco ordini</h2>
+<div class="g2"><input type="search" id="q" placeholder="Cerca nome o telefono"><input type="date" id="fd" title="Data ritiro"></div>
+<select id="fst" style="margin-bottom:6px"><option value="">Tutti gli ordini</option><option value="d">Da ritirare</option><option value="c">Completati</option></select>
+<div id="list"></div></div>
+
+<div class="card tab" data-tab="giorni"><h2>Ritiri giorno per giorno</h2><div id="days"></div></div>
+
+<div class="card tab" data-tab="vendita"><h2>Vendita senza prenotazione</h2><p class="sub">Si vende solo ciò che è disponibile (prodotto − ordinato − già venduto).</p>
+<div id="fs"></div><div class="meta" id="sot" style="margin:8px 0"></div>
+<button class="btn" id="ssave">Registra vendita</button><div id="slist" style="margin-top:10px"></div></div>
+
+<div class="card tab" data-tab="produzione"><h2 id="xtitle">Produzione panettoni</h2>
+<label>Data produzione</label><input type="date" id="xd" style="margin-bottom:6px"><div id="fx"></div><div class="meta" id="xtot" style="margin:8px 0"></div><div class="row"><button class="btn" id="xsave" style="flex:1">Aggiungi produzione</button><button class="btn s" id="xcancel" style="display:none">Annulla</button></div>
+
+<div id="plist"></div></div>
+
+<div class="card tab" data-tab="resoconto"><h2>Resoconto finale</h2><div class="tot" id="rtot"></div><div class="tw"><table><thead><tr><th>Prodotto</th><th>Prodotti</th><th>Ordinati</th><th>Ritirati</th><th>Venduti</th><th>Magazzino</th><th>Disp. vendita</th></tr></thead><tbody id="rep"></tbody></table></div></div>
+
+<div class="card tab" data-tab="archivio"><h2>Archivio condiviso</h2><p class="sub">Collega un archivio online: tutti quelli che usano il link vedono e modificano gli stessi dati, da qualsiasi dispositivo.</p>
+<label>Indirizzo del database (Firebase Realtime Database)</label><input type="url" id="aurl" placeholder="https://nome-default-rtdb.europe-west1.firebasedatabase.app">
+<div class="row" style="margin-top:8px"><button class="btn s pri" id="aconn">Collega</button><button class="btn s" id="adis">Scollega</button></div>
+<label style="margin-top:12px">Link da inviare agli altri (si collegano da soli)</label><input type="text" id="alink" readonly>
+<div class="row" style="margin-top:6px"><button class="btn s" id="acopy">Copia link</button></div>
+<p class="meta" style="margin-top:8px">Attenzione: chi ha il link vede e può modificare tutti i dati, compresi nomi e telefoni dei clienti. Condividilo solo con persone di fiducia.</p></div>
+
+<div class="card tab" data-tab="stampa"><h2>Stampa e PDF</h2><p class="sub">Apri un documento per stamparlo, oppure salvalo direttamente in PDF.</p><div id="prl"></div></div>
+
+<div class="card tab" data-tab="backup"><h2>Salvataggio e backup</h2><p class="sub">I dati si salvano da soli a ogni modifica. Scarica ogni tanto una copia di riserva. Con l’archivio condiviso collegato i dati sono comuni a tutti. Senza, scambiatevi i backup e usate «Unisci dati da backup».</p>
+<div class="row"><button class="btn s" id="bj">Scarica backup (.json)</button><button class="btn s" id="bc">Ordini per Excel (.csv)</button><label class="btn s" style="display:inline-block;cursor:pointer;margin:0">Unisci dati da backup<input type="file" id="rest" accept=".json,application/json" hidden></label></div></div>
+</main>
+<div class="ov" id="ov"><div class="sheet" id="sheet"></div></div>
+<div class="ov" id="cf"><div class="sheet" id="cfm"></div></div>
+<div id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const rail=document.createElement("div");rail.id="rail";{const m0=document.querySelector("main"),cs=[...m0.querySelectorAll(":scope>.tab")];m0.insertBefore(rail,cs[0]);cs.forEach(c=>rail.appendChild(c))}
+function showTab(t){rail.querySelectorAll(".tab").forEach(c=>c.classList.toggle("on",c.dataset.tab===t));document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x.dataset.t===t));const c=rail.querySelector(".tab.on");if(c)c.scrollTop=0}
+showTab("nuova");
+const P=[["Classico","1 kg",1,35],["Classico","500 g",.5,20],["Classico mandorlato","1 kg",1,35],["Classico mandorlato","500 g",.5,20],["Bianco 3 cioccolati","1 kg",1,35],["Bianco 3 cioccolati","500 g",.5,20],["Dark Mimì","1 kg",1,35],["Dark Mimì","500 g",.5,20],["Dark 3 cioccolati","1 kg",1,35],["Dark 3 cioccolati","500 g",.5,20],["Pandoro","1 kg",1,35],["Pandoro","750 g",.75,26],["Pistacchio","1 kg",1,38],["Pistacchio","500 g",.5,22]];
+const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=d=>d?d.split("-").reverse().join("/"):"—",E=n=>"€ "+(Math.round(n*100)/100).toFixed(2).replace(".",","),nm=p=>p[0]+" "+p[1];
+const today=()=>new Date().toISOString().slice(0,10),dl=d=>d?new Date(d+"T12:00").toLocaleDateString("it-IT",{weekday:"short",day:"2-digit",month:"2-digit"}):"Senza data";
+const num=v=>parseFloat(String(v).replace(",","."))||0,srt=(a,b)=>(a||"9").localeCompare(b||"9");
+let D={orders:[],prod:[],sales:[]},db=null,LS="panettoni-v2",cur=P.map(()=>0),sc=P.map(()=>0),xc=P.map(()=>0),editO=null,editP=null,rt=null,sk="";
+const save=()=>{try{localStorage.setItem(LS,JSON.stringify(D))}catch(e){}};
+function load(){try{const d=JSON.parse(localStorage.getItem(LS));if(d){D={orders:d.orders||[],prod:d.prod||[],sales:d.sales||[]};return}const v=JSON.parse(localStorage.getItem("panettoni-v1"));if(v)D.orders=v.orders||[]}catch(e){}}
+let RU=null,pend=0,lastW=0;
+const rurl=u=>{u=(u||"").trim().replace(/\/+$/,"");return /^https:\/\/[\w.-]+$/.test(u)&&/firebase(io\.com|database\.app)$/.test(u)?u:""};
+async function rq(m,path,body){pend++;try{const r=await fetch(RU+"/"+path+".json",{method:m,headers:{"Content-Type":"application/json"},body:body===undefined?undefined:JSON.stringify(body)});if(!r.ok)throw new Error(r.status);return await r.json()}finally{pend--;lastW=Date.now()}}
+async function put(c,o){o.upd=Date.now();if(RU){if(!o.id)o.id=c[0]+Date.now()+Math.random().toString(36).slice(2,6);const i=D[c].findIndex(x=>x.id===o.id);if(i<0)D[c].push(o);else D[c][i]=o;save();render();const{id,...x}=o;try{await rq("PUT",c+"/"+id,x)}catch(e){msg("Salvataggio non riuscito: controlla la connessione.")}return}if(db){if(o.id){const{id,...x}=o;await db.doc(c+"/"+id).set(x)}else await db.collection(c).add(o)}else{if(o.id)D[c]=D[c].map(x=>x.id===o.id?o:x);else{o.id=c[0]+Date.now()+Math.random().toString(36).slice(2,6);D[c].push(o)}save();render()}}
+async function del(c,id){if(RU){D[c]=D[c].filter(x=>x.id!==id);save();render();try{await rq("DELETE",c+"/"+id)}catch(e){msg("Eliminazione non riuscita: controlla la connessione.")}return}if(db)await db.doc(c+"/"+id).delete();else{D[c]=D[c].filter(x=>x.id!==id);save();render()}}
+const msg=t=>{const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(msg.t);msg.t=setTimeout(()=>e.classList.remove("on"),2600)};
+function ask(m,ok){return new Promise(r=>{$("#cfm").innerHTML=`<p>${m}</p><div class="row" style="justify-content:flex-end"><button class="btn s" id="cn">Annulla</button><button class="btn s pri" id="cy">${ok||"Conferma"}</button></div>`;$("#cf").classList.add("on");const f=v=>{$("#cf").classList.remove("on");r(v)};$("#cn").onclick=()=>f(false);$("#cy").onclick=()=>f(true)})}
+const oq=(o,i)=>(o.q&&o.q[i])||0,or_=(o,i)=>o.r&&o.r.length?(o.r[i]||0):(o.ritirato?oq(o,i):0);
+const sq=o=>P.reduce((s,p,i)=>s+oq(o,i),0),sr=o=>P.reduce((s,p,i)=>s+or_(o,i),0),tot=o=>P.reduce((s,p,i)=>s+oq(o,i)*p[3],0),paid=o=>(o.pay||[]).reduce((s,x)=>s+x.amt,0);
+const produced=i=>D.prod.filter(x=>x.p===i).reduce((s,x)=>s+x.qta,0),ordered=i=>D.orders.reduce((s,o)=>s+oq(o,i),0),picked=i=>D.orders.reduce((s,o)=>s+or_(o,i),0),sold=i=>D.sales.reduce((s,x)=>s+((x.q&&x.q[i])||0),0);
+const avail=i=>produced(i)-ordered(i)-sold(i),stockQ=i=>produced(i)-picked(i)-sold(i),cls=n=>n<0?"bad":n<=2?"warn":"ok";
+function steps(h,pre){$(h).innerHTML=P.map((p,i)=>`<div class="prod"><div class="n"><b>${esc(p[0])}</b> ${esc(p[1])} ${pre==="x"?"":`<span class="meta">· ${E(p[3])}</span>`}<small id="${pre}l${i}"></small></div><div class="st"><button data-f="${pre}" data-i="${i}" data-d="-1">−</button>${pre==="x"?`<input type="number" min="0" inputmode="numeric" id="xc${i}" data-xi="${i}" placeholder="0" style="width:64px;padding:6px;text-align:center">`:`<span id="${pre}c${i}">0</span>`}<button data-f="${pre}" data-i="${i}" data-d="1">+</button></div></div>`).join("")}
+function paintForms(){let t=0,v=0,s=0,sv=0;P.forEach((p,i)=>{t+=cur[i];v+=cur[i]*p[3];$("#oc"+i).textContent=cur[i];const e=avail(i)+(editO?oq(editO,i):0)-cur[i],l=$("#ol"+i);l.textContent=e<0?`Oltre la disponibilità di ${-e}`:`Disponibili: ${e}`;l.className=cls(e);
+ s+=sc[i];sv+=sc[i]*p[3];$("#sc"+i).textContent=sc[i];const a=avail(i)-sc[i];$("#sl"+i).textContent=`Disponibili: ${a}`;$("#sl"+i).className=cls(a)});
+ $("#fot").textContent=t?`${t} pezzi · Totale ${E(v)}`:"";$("#sot").textContent=s?`${s} pezzi · Totale ${E(sv)}`:"";let xt=0;P.forEach((p,i)=>{xt+=xc[i];const xe=$("#xc"+i);if(document.activeElement!==xe)xe.value=xc[i]||"";$("#xl"+i).textContent="Già prodotti: "+produced(i)});$("#xtot").textContent=xt?`${xt} pezzi`:""}
+function resetO(){editO=null;cur=P.map(()=>0);["nome","cognome","tel","data","oacc"].forEach(x=>$("#"+x).value="");$("#otitle").textContent="Nuova prenotazione";$("#osave").textContent="Salva prenotazione";$("#ocancel").style.display="none";$("#accw").style.display="block";paintForms()}
+function resetP(){editP=null;xc=P.map(()=>0);$("#xd").value=today();$("#xtitle").textContent="Produzione panettoni";$("#xsave").textContent="Aggiungi produzione";$("#xcancel").style.display="none";paintForms()}
+function strip(){$("#strip").innerHTML=P.map((p,i)=>{const a=avail(i);return `<span class="chip" style="opacity:${a>0?1:.5}">${esc(nm(p))}<b class="${cls(a)}">${a}</b></span>`}).join("")}
+function list(){const q=$("#q").value.trim().toLowerCase(),fd=$("#fd").value,fs=$("#fst").value;
+ const vis=D.orders.slice().sort((a,b)=>srt(a.data,b.data)||(a.ts||0)-(b.ts||0)).filter(o=>{const st=sr(o)>=sq(o)?"c":"d";return(!fs||fs===st)&&(!fd||o.data===fd)&&(!q||(o.nome+" "+o.cognome+" "+(o.tel||"")).toLowerCase().includes(q))});
+ $("#list").innerHTML=vis.length?vis.map(o=>{const r=sr(o),n=sq(o),t=tot(o),pd=paid(o),sd=t-pd,tg=r>=n?'<span class="tag ok">Ritirato</span>':r?'<span class="tag warn">Parziale</span>':'<span class="tag">Da ritirare</span>';
+ return `<div class="ord"><div class="top"><div><span class="nm">${esc(o.nome)} ${esc(o.cognome)}</span><div class="meta">${esc(o.tel||"")} · ritiro ${fmt(o.data)}</div></div>${tg}</div><div class="items">${P.map((p,i)=>oq(o,i)?`${or_(o,i)}/${oq(o,i)}× ${esc(nm(p))}`:"").filter(Boolean).join(" · ")}</div>
+ <div class="money"><span>Totale <b>${E(t)}</b></span><span>Versato <b>${E(pd)}</b></span><span>Saldo <b class="${sd>0.005?"bad":"ok"}">${E(sd)}</b></span></div>
+ <div class="row"><button class="btn s pri" data-a="rit" data-id="${o.id}">Ritiro / incasso</button><button class="btn s" data-a="mod" data-id="${o.id}">Modifica</button><button class="btn s" data-a="stp" data-id="${o.id}">Stampa</button><button class="btn s" data-a="del" data-id="${o.id}">Elimina</button></div></div>`}).join(""):'<p class="meta">Nessun ordine.</p>'}
+function days(){const g={};D.orders.filter(o=>sq(o)>sr(o)).forEach(o=>(g[o.data||""]=g[o.data||""]||[]).push(o));const ks=Object.keys(g).sort(srt);
+ $("#days").innerHTML=ks.length?ks.map(k=>{const os=g[k];let n=0,s=0;const pr=P.map(()=>0);os.forEach(o=>{P.forEach((p,i)=>{const d=oq(o,i)-or_(o,i);pr[i]+=d;n+=d});s+=tot(o)-paid(o)});
+ return `<div class="day"><div class="top"><b>${dl(k)}</b>${k&&k<today()?'<span class="tag bad">In ritardo</span>':k===today()?'<span class="tag ok">Oggi</span>':""}</div><div class="meta">${os.length} ordini · ${n} pezzi da ritirare · saldo da incassare ${E(s)}</div><div class="items"><b>Da preparare:</b> ${P.map((p,i)=>pr[i]?`${pr[i]}× ${esc(nm(p))}`:"").filter(Boolean).join(" · ")}</div>
+ ${os.map(o=>`<div class="ord"><b>${esc(o.nome)} ${esc(o.cognome)}</b> <span class="meta">${esc(o.tel||"")}</span><div class="items">${P.map((p,i)=>{const d=oq(o,i)-or_(o,i);return d?`${d}× ${esc(nm(p))}`:""}).filter(Boolean).join(" · ")} — saldo <b>${E(tot(o)-paid(o))}</b></div></div>`).join("")}</div>`}).join(""):'<p class="meta">Nessun ritiro in programma.</p>'}
+function prodList(){const g={};D.prod.forEach(x=>(g[x.data||""]=g[x.data||""]||[]).push(x));const ks=Object.keys(g).sort(srt);
+ $("#plist").innerHTML=ks.length?ks.map(k=>`<div class="day"><div class="top"><b>${dl(k)}</b><span class="meta">${g[k].reduce((s,x)=>s+x.qta,0)} pezzi</span></div>${g[k].map(x=>`<div class="prod"><div class="n">${esc(nm(P[x.p]))}</div><b>${x.qta}</b><button class="btn s" data-a="pe" data-id="${x.id}">Modifica</button><button class="btn s" data-a="pd" data-id="${x.id}">Elimina</button></div>`).join("")}</div>`).join(""):'<p class="meta">Nessuna produzione inserita.</p>'}
+function salesList(){$("#slist").innerHTML=D.sales.slice().sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,8).map(x=>`<div class="prod"><div class="n"><span class="meta">${fmt(x.data)} ${new Date(x.ts).toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"})}</span><div class="items">${P.map((p,i)=>x.q&&x.q[i]?`${x.q[i]}× ${esc(nm(p))}`:"").filter(Boolean).join(" · ")}</div></div><b>${E(x.tot||0)}</b><button class="btn s" data-a="sd" data-id="${x.id}">Elimina</button></div>`).join("")}
+function rep(){let ot=0,pd=0,pv=0,sv=0;D.orders.forEach(o=>{ot+=tot(o);pd+=paid(o);pv+=P.reduce((s,p,i)=>s+or_(o,i)*p[3],0)});D.sales.forEach(x=>sv+=x.tot||0);
+ $("#rtot").innerHTML=[["Totale ordini",E(ot)],["Valore ritirato",E(pv)],["Incassato ordini",E(pd)],["Da incassare",E(ot-pd)],["Vendite dirette",E(sv)],["Incasso complessivo",E(pd+sv)]].map(a=>`<div><b>${a[1]}</b>${a[0]}</div>`).join("");
+ let T=[0,0,0,0,0,0];$("#rep").innerHTML=P.map((p,i)=>{const v=[produced(i),ordered(i),picked(i),sold(i),stockQ(i),avail(i)];v.forEach((n,j)=>T[j]+=n);return `<tr><td><b>${esc(p[0])}</b> <span class="meta">${esc(p[1])}</span></td>${v.map((n,j)=>`<td${j>3?` class="${cls(n)}"`:""}>${n}</td>`).join("")}</tr>`}).join("")+`<tr><td><b>Totale</b></td>${T.map(n=>`<td><b>${n}</b></td>`).join("")}</tr>`}
+function render(){paintForms();strip();list();days();prodList();salesList();rep();if(sk==="r"&&$("#ov").classList.contains("on")&&document.activeElement.id!=="inc")drawR()}
+const openOv=k=>{sk=k;$("#ov").classList.add("on")},closeOv=()=>{sk="";$("#ov").classList.remove("on")};
+function drawR(){const o=D.orders.find(x=>x.id===rt.id);if(!o)return closeOv();const t=tot(o),pd=paid(o);let nv=0,nn=0;P.forEach((p,i)=>{nv+=rt.now[i]*p[3];nn+=rt.now[i]});
+ const rows=P.map((p,i)=>oq(o,i)?`<tr><td>${esc(nm(p))}</td><td><b>${oq(o,i)}</b></td><td>${or_(o,i)}</td><td class="${cls(stockQ(i))}">${stockQ(i)}</td><td><div class="st" style="justify-content:center"><button data-f="r" data-i="${i}" data-d="-1">−</button><span>${rt.now[i]}</span><button data-f="r" data-i="${i}" data-d="1">+</button></div></td></tr>`:"").join("");
+ $("#sheet").innerHTML=`<h2>Ritiro · ${esc(o.nome)} ${esc(o.cognome)}</h2><div class="meta">Ritiro previsto ${fmt(o.data)} · ${esc(o.tel||"")}</div><div class="tw"><table style="min-width:420px"><thead><tr><th>Prodotto</th><th>Ordinato</th><th>Già ritirato</th><th>Magazzino</th><th>Ritira ora</th></tr></thead><tbody>${rows}</tbody></table></div>
+ <div class="money" style="margin-top:10px"><span>Totale ordine <b>${E(t)}</b></span><span>Versato <b>${E(pd)}</b></span><span>Saldo <b class="${t-pd>0.005?"bad":"ok"}">${E(t-pd)}</b></span></div>
+ <div class="meta">Ritiro ora: ${nn} pezzi · ${E(nv)}</div>${(o.pay||[]).map((x,k)=>`<div class="meta">${fmt(x.d)} · ${esc(x.t)} ${E(x.amt)} <button class="btn s" data-a="dp" data-k="${k}">×</button></div>`).join("")}
+ <label style="margin-top:10px">Incasso ora (€)</label><div class="row"><input type="number" min="0" step="0.01" inputmode="decimal" id="inc" value="${esc(rt.inc)}" style="flex:1"><button class="btn s" data-a="hq">Tutto il saldo</button></div>
+ <div class="row" style="margin-top:12px;justify-content:flex-end"><button class="btn s" data-a="close">Chiudi</button><button class="btn s pri" data-a="conf">Conferma ritiro / incasso</button></div>`}
+function scheda(o){return `<h2>Ordine panettoni</h2><p><b>${esc(o.nome)} ${esc(o.cognome)}</b><br>Tel. ${esc(o.tel||"—")}<br>Ritiro: ${fmt(o.data)}</p><table style="min-width:0"><thead><tr><th>Prodotto</th><th>Q.tà</th><th>Prezzo</th><th>Importo</th><th>Ritirati</th></tr></thead><tbody>${P.map((p,i)=>oq(o,i)?`<tr><td>${esc(nm(p))}</td><td>${oq(o,i)}</td><td>${E(p[3])}</td><td>${E(oq(o,i)*p[3])}</td><td>${or_(o,i)}</td></tr>`:"").join("")}</tbody></table><p>Totale: <b>${E(tot(o))}</b><br>Versato: ${E(paid(o))}<br>Saldo da pagare: <b>${E(tot(o)-paid(o))}</b></p>`}
+let dlh;async function savef(n,d){if(!window.claude){const u=URL.createObjectURL(new Blob([d],{type:/\.pdf$/.test(n)?"application/pdf":/\.json$/.test(n)?"application/json":"text/plain"})),a=document.createElement("a");a.href=u;a.download=n;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return true}try{dlh=dlh||await claude.use("downloads")}catch(e){dlh=null}if(!dlh){msg("Download non disponibile qui.");return false}try{await dlh.save({filename:n,data:d});return true}catch(e){msg(e&&e.code==="declined"?"Download annullato.":"Download non riuscito.");return false}}
+async function doR(){const o=D.orders.find(x=>x.id===rt.id),n=rt.now.reduce((a,b)=>a+b,0),amt=num(rt.inc);if(!n&&!amt)return msg("Niente da confermare.");
+ const nv=P.reduce((s,p,i)=>s+rt.now[i]*p[3],0),w=P.map((p,i)=>rt.now[i]>stockQ(i)?nm(p):"").filter(Boolean);
+ if(!await ask(`Confermi${n?` il ritiro di <b>${n}</b> pezzi (${E(nv)})`:""}${n&&amt?" e":""}${amt?` l’incasso di <b>${E(amt)}</b>`:""} per <b>${esc(o.nome+" "+o.cognome)}</b>?${w.length?`<br><span class="warn">Attenzione: magazzino insufficiente per ${esc(w.join(", "))}.</span>`:""}`))return;
+ const x={...o,r:P.map((p,i)=>or_(o,i)+rt.now[i]),pay:(o.pay||[]).slice()};delete x.ritirato;if(amt>0)x.pay.push({d:today(),amt,t:paid(o)+amt>=tot(o)-.005?"Saldo":"Acconto"});
+ rt.now=P.map(()=>0);rt.inc="";await put("orders",x);msg("Ritiro registrato.")}
+document.addEventListener("click",async e=>{const f=e.target.closest("button[data-f]");
+ if(f){const i=+f.dataset.i,d=+f.dataset.d,k=f.dataset.f;if(k==="o")cur[i]=Math.max(0,cur[i]+d);else if(k==="x")xc[i]=Math.max(0,xc[i]+d);else if(k==="s"){if(d>0&&sc[i]>=avail(i))return msg("Disponibilità esaurita.");sc[i]=Math.max(0,sc[i]+d)}else{const o=D.orders.find(x=>x.id===rt.id);rt.now[i]=Math.min(oq(o,i)-or_(o,i),Math.max(0,rt.now[i]+d));return drawR()}return paintForms()}
+ const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a,id=b.dataset.id,o=D.orders.find(x=>x.id===id);
+ if(a==="close")closeOv();
+ else if(a==="rit"){rt={id,now:P.map(()=>0),inc:""};openOv("r");drawR()}
+ else if(a==="hq"){const r=D.orders.find(x=>x.id===rt.id);rt.inc=Math.max(0,tot(r)-paid(r)).toFixed(2);drawR()}
+ else if(a==="rp"){const m=model(b.dataset.r);if(b.dataset.m==="p")pdfSave(m,m.fn);else preview(m)}
+ else if(a==="conf")doR();
+ else if(a==="dp"){const r=D.orders.find(x=>x.id===rt.id),p=r.pay[+b.dataset.k];if(await ask(`Eliminare il pagamento di <b>${E(p.amt)}</b> del ${fmt(p.d)}?`)){await put("orders",{...r,pay:r.pay.filter((x,j)=>j!==+b.dataset.k)});msg("Pagamento eliminato.")}}
+ else if(a==="mod"){editO=o;cur=P.map((p,i)=>oq(o,i));$("#nome").value=o.nome||"";$("#cognome").value=o.cognome||"";$("#tel").value=o.tel||"";$("#data").value=o.data||"";$("#otitle").textContent="Modifica ordine";$("#osave").textContent="Salva modifiche";$("#ocancel").style.display="inline-block";$("#accw").style.display="none";paintForms();showTab("nuova")}
+ else if(a==="stp"){$("#sheet").innerHTML=scheda(o)+`<div class="row np" style="margin-top:12px"><button class="btn s pri" id="pp">Stampa</button><button class="btn s" id="pdf">Salva PDF</button><button class="btn s" id="pd">Scarica scheda</button><button class="btn s" data-a="close">Chiudi</button></div>`;openOv("p");$("#pdf").onclick=()=>pdfSave(orderModel(o),"ordine-"+((o.cognome||o.nome||"cliente").toLowerCase().replace(/\W+/g,"-"))+".pdf");$("#pp").onclick=()=>{try{window.print()}catch(x){msg("Stampa non disponibile: usa Scarica scheda.")}};$("#pd").onclick=()=>savef("ordine-"+((o.cognome||o.nome||"cliente").toLowerCase().replace(/\W+/g,"-"))+".html","<!doctype html><meta charset=utf-8><title>Ordine</title><style>body{font-family:Arial;padding:24px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #999;padding:6px;text-align:left}</style>"+scheda(o))}
+ else if(a==="del"){if(await ask(`Eliminare l’ordine di <b>${esc(o.nome+" "+o.cognome)}</b>? Non si può annullare.`)){await del("orders",id);msg("Ordine eliminato.")}}
+ else if(a==="pe"){const x=D.prod.find(y=>y.id===id);editP=x;xc=P.map((p,i)=>i===x.p?x.qta:0);$("#xd").value=x.data||"";paintForms();$("#xtitle").textContent="Modifica produzione";$("#xsave").textContent="Salva";$("#xcancel").style.display="inline-block";showTab("produzione")}
+ else if(a==="pd"){const x=D.prod.find(y=>y.id===id);if(await ask(`Eliminare la produzione di <b>${x.qta}× ${esc(nm(P[x.p]))}</b> del ${fmt(x.data)}?`)){await del("prod",id);msg("Produzione eliminata.")}}
+ else if(a==="sd"){if(await ask("Eliminare questa vendita? I pezzi tornano disponibili.")){await del("sales",id);msg("Vendita eliminata.")}}});
+document.addEventListener("input",e=>{if(e.target.id==="inc")rt.inc=e.target.value;else if(e.target.dataset.xi!=null){xc[+e.target.dataset.xi]=Math.max(0,parseInt(e.target.value,10)||0);paintForms()}});
+$("#nav").onclick=e=>{const b=e.target.closest("button");if(b)showTab(b.dataset.t)};
+["#q","#fd","#fst"].forEach(s=>$(s).addEventListener("input",list));
+$("#ocancel").onclick=resetO;$("#xcancel").onclick=resetP;
+function sumO(o,old){const t=tot(o),pd=paid(o),nome=esc(o.nome+" "+o.cognome);
+ let h=`<b>${old?"Riepilogo modifiche all’ordine":"Riepilogo nuova prenotazione"}</b><br>${nome} · ${esc(o.tel||"—")} · ritiro ${fmt(o.data)}`;
+ if(old){const c=[];if((old.nome||"")!==o.nome||(old.cognome||"")!==o.cognome)c.push(`Cliente: ${esc((old.nome||"")+" "+(old.cognome||""))} → ${nome}`);if((old.tel||"")!==(o.tel||""))c.push(`Telefono: ${esc(old.tel||"—")} → ${esc(o.tel||"—")}`);if((old.data||"")!==(o.data||""))c.push(`Ritiro: ${fmt(old.data)} → ${fmt(o.data)}`);
+  P.forEach((p,i)=>{if(oq(old,i)!==oq(o,i))c.push(`${esc(nm(p))}: ${oq(old,i)} → <b>${oq(o,i)}</b>`)});
+  h+=`<div class="items"><b>Cosa cambia:</b><br>${c.length?c.join("<br>"):"Nessuna modifica"}</div>`}
+ h+=`<div class="items"><b>Ordine finale:</b><br>${P.map((p,i)=>oq(o,i)?`${oq(o,i)}× ${esc(nm(p))} — ${E(oq(o,i)*p[3])}`:"").filter(Boolean).join("<br>")}</div><div class="money"><span>Totale <b>${E(t)}</b>${old&&tot(old)!==t?` <span class="meta">(prima ${E(tot(old))})</span>`:""}</span><span>Versato <b>${E(pd)}</b></span><span>Saldo <b>${E(t-pd)}</b></span></div>`;return h}
+$("#osave").onclick=async()=>{const nome=$("#nome").value.trim(),cognome=$("#cognome").value.trim(),tel=$("#tel").value.trim(),data=$("#data").value;
+ if(!nome&&!cognome)return msg("Inserisci almeno nome o cognome.");if(!cur.some(n=>n))return msg("Scegli almeno un panettone.");
+ const q=cur.slice();let o;if(editO){const r=P.map((p,i)=>or_(editO,i));q.forEach((n,i)=>{if(n<r[i])q[i]=r[i]});o={...editO,nome,cognome,tel,data,q,r};delete o.ritirato}
+ else{const ac=num($("#oacc").value);o={nome,cognome,tel,data,q,r:P.map(()=>0),pay:ac>0?[{d:today(),amt:ac,t:"Acconto"}]:[],ts:Date.now()}}
+ if(!await ask(sumO(o,editO),"Conferma e salva"))return;
+ await put("orders",o);resetO();msg("Ordine salvato.")};
+$("#xsave").onclick=async()=>{const data=$("#xd").value,it=P.map((p,i)=>[i,xc[i]]).filter(a=>a[1]>0);if(!it.length)return msg("Scegli almeno un panettone.");
+ if(!await ask(`${editP?"Salvare la modifica della produzione":"Aggiungere la produzione"} del <b>${fmt(data)}</b>:<br>${it.map(a=>`${a[1]}× ${esc(nm(P[a[0]]))}`).join("<br>")}`))return;
+ for(let k=0;k<it.length;k++){const[p,qta]=it[k];await put("prod",editP&&k===0?{...editP,p,data,qta}:{p,data,qta,ts:Date.now()+k})}resetP();msg("Produzione salvata.")};
+$("#ssave").onclick=async()=>{const n=sc.reduce((a,b)=>a+b,0);if(!n)return msg("Scegli almeno un panettone.");const t=P.reduce((s,p,i)=>s+sc[i]*p[3],0);
+ if(!await ask(`Registrare la vendita di <b>${n}</b> pezzi per <b>${E(t)}</b>?`))return;await put("sales",{q:sc.slice(),tot:t,data:today(),ts:Date.now()});sc=P.map(()=>0);paintForms();msg("Vendita registrata.")};
+const bk=()=>JSON.stringify({v:2,saved:new Date().toISOString(),...D},null,1),key=o=>JSON.stringify([o.ts,o.nome||"",o.cognome||"",o.p??"",o.data||"",o.qta||0]);
+function modelHTML(m){return `<h2>${esc(m.title)}</h2><div class="meta">${esc(m.sub||"")}</div>`+m.b.map(x=>x.h?`<h3 style="margin:14px 0 4px;font-size:15px">${esc(x.h)}</h3>`:x.p!=null?`<p style="margin:4px 0;font-size:13px">${esc(x.p).replace(/\n/g,"<br>")}</p>`:`<div class="tw"><table style="min-width:0"><thead><tr>${x.t.head.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${x.t.rows.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`).join("")}
+function preview(m){$("#sheet").innerHTML=modelHTML(m)+`<div class="row np" style="margin-top:12px"><button class="btn s pri" id="pp">Stampa</button><button class="btn s" id="pdf">Salva PDF</button><button class="btn s" data-a="close">Chiudi</button></div>`;openOv("p");$("#pp").onclick=()=>{try{window.print()}catch(x){msg("Stampa non disponibile: usa Salva PDF.")}};$("#pdf").onclick=()=>pdfSave(m,m.fn)}
+async function pdfSave(m,fn){const J=window.jspdf&&window.jspdf.jsPDF;if(!J)return msg("Libreria PDF non caricata: controlla la connessione e riprova.");
+ const d=new J({orientation:m.b.some(x=>x.t&&x.t.head.length>6)?"l":"p",unit:"mm",format:"a4"}),W=d.internal.pageSize.getWidth(),H=d.internal.pageSize.getHeight(),M=14,ps=s=>String(s??"").replace(/€ ?/g,"EUR ").replace(/[—–·]/g,"-").replace(/→/g,"->");let y=M;const nl=h=>{if(y+h>H-M){d.addPage();y=M}};d.setTextColor(0);
+ d.setFont("helvetica","bold");d.setFontSize(16);d.text(ps(m.title),M,y+5);y+=9;if(m.sub){d.setFont("helvetica","normal");d.setFontSize(9);d.text(ps(m.sub),M,y);y+=6}
+ m.b.forEach(x=>{if(x.h){nl(12);y+=3;d.setFont("helvetica","bold");d.setFontSize(12);d.text(ps(x.h),M,y+4);y+=7}
+  else if(x.p!=null){d.setFont("helvetica","normal");d.setFontSize(10);d.splitTextToSize(ps(x.p),W-2*M).forEach(l=>{nl(5);d.text(l,M,y+4);y+=5});y+=1}
+  else{const t=x.t,tw=W-2*M,sw=t.w||t.head.map(()=>1),sm=sw.reduce((a,b)=>a+b,0),cw=sw.map(v=>v/sm*tw),xs=[];let ax=M;cw.forEach(w=>{xs.push(ax);ax+=w});
+   const row=(cs,bd)=>{d.setFont("helvetica",bd?"bold":"normal");d.setFontSize(9);const ls=cs.map((c,i)=>d.splitTextToSize(ps(c),cw[i]-3)),h=Math.max(...ls.map(l=>l.length))*4.2+2.4;nl(h);if(bd){d.setFillColor(236,236,236);d.rect(M,y,tw,h,"F")}ls.forEach((l,i)=>d.text(l,xs[i]+1.5,y+4.2));d.setDrawColor(190);d.line(M,y+h,M+tw,y+h);y+=h};
+   row(t.head,true);t.rows.forEach(r=>row(r,r[0]==="Totale"));y+=3}});
+ if(await savef(fn,d.output("arraybuffer")))msg("PDF salvato.")}
+const orderModel=o=>({title:"Ordine panettoni",sub:"Cliente: "+(o.nome+" "+o.cognome).trim()+" - Tel. "+(o.tel||"-")+" - Ritiro: "+fmt(o.data),b:[{t:{head:["Prodotto","Q.tà","Prezzo","Importo","Ritirati"],w:[4,1,1.3,1.3,1.1],rows:P.map((p,i)=>oq(o,i)?[nm(p),String(oq(o,i)),E(p[3]),E(oq(o,i)*p[3]),String(or_(o,i))]:null).filter(Boolean)}},{p:`Totale: ${E(tot(o))}\nVersato: ${E(paid(o))}\nSaldo da pagare: ${E(tot(o)-paid(o))}`}]});
+function model(k){const sub="Generato il "+fmt(today()),cn=o=>(o.nome+" "+o.cognome).trim(),it=(o,f)=>P.map((p,i)=>f(o,i)?`${f(o,i)}× ${nm(p)}`:"").filter(Boolean).join(", ");
+ if(k==="res"){let ot=0,pd=0,pv=0,sv=0;D.orders.forEach(o=>{ot+=tot(o);pd+=paid(o);pv+=P.reduce((s,p,i)=>s+or_(o,i)*p[3],0)});D.sales.forEach(x=>sv+=x.tot||0);const T=[0,0,0,0,0,0],rows=P.map((p,i)=>{const v=[produced(i),ordered(i),picked(i),sold(i),stockQ(i),avail(i)];v.forEach((n,j)=>T[j]+=n);return[nm(p),...v]});
+  return{title:"Resoconto finale panettoni",sub,fn:"resoconto-panettoni.pdf",b:[{p:`Totale ordini: ${E(ot)}\nValore ritirato: ${E(pv)}\nIncassato ordini: ${E(pd)}\nDa incassare: ${E(ot-pd)}\nVendite dirette: ${E(sv)}\nIncasso complessivo: ${E(pd+sv)}`},{t:{head:["Prodotto","Prodotti","Ordinati","Ritirati","Venduti","Magazzino","Disp. vendita"],w:[3,1,1,1,1,1.2,1.4],rows:[...rows,["Totale",...T]]}}]}}
+ if(k==="rit"){const g={},b=[];D.orders.filter(o=>sq(o)>sr(o)).forEach(o=>(g[o.data||""]=g[o.data||""]||[]).push(o));Object.keys(g).sort(srt).forEach(k2=>{const os=g[k2],rest=(o,i)=>oq(o,i)-or_(o,i);let n=0,s=0;const pr=P.map(()=>0);os.forEach(o=>{P.forEach((p,i)=>{pr[i]+=rest(o,i);n+=rest(o,i)});s+=tot(o)-paid(o)});
+   b.push({h:`${dl(k2)} - ${os.length} ordini, ${n} pezzi, saldo ${E(s)}`},{p:"Da preparare: "+P.map((p,i)=>pr[i]?`${pr[i]}× ${nm(p)}`:"").filter(Boolean).join(", ")},{t:{head:["Cliente","Telefono","Da ritirare","Saldo"],w:[2,1.5,5,1.2],rows:os.map(o=>[cn(o),o.tel||"",it(o,rest),E(tot(o)-paid(o))])}})});
+  return{title:"Ritiri giorno per giorno",sub,fn:"ritiri-panettoni.pdf",b:b.length?b:[{p:"Nessun ritiro in programma."}]}}
+ if(k==="ord")return{title:"Elenco ordini",sub,fn:"ordini-panettoni.pdf",b:D.orders.length?[{t:{head:["Cliente","Telefono","Ritiro","Ordinato","Totale","Versato","Saldo","Stato"],w:[2,1.5,1.2,5,1.1,1.1,1.1,1.2],rows:D.orders.slice().sort((a,b)=>srt(a.data,b.data)).map(o=>[cn(o),o.tel||"",fmt(o.data),it(o,oq),E(tot(o)),E(paid(o)),E(tot(o)-paid(o)),sr(o)>=sq(o)?"Ritirato":sr(o)?"Parziale":"Da ritirare"])}}]:[{p:"Nessun ordine."}]};
+ const g={},b=[];D.prod.forEach(x=>(g[x.data||""]=g[x.data||""]||[]).push(x));Object.keys(g).sort(srt).forEach(k2=>b.push({h:`${dl(k2)} - ${g[k2].reduce((s,x)=>s+x.qta,0)} pezzi`},{t:{head:["Prodotto","Quantità"],w:[4,1],rows:g[k2].map(x=>[nm(P[x.p]),String(x.qta)])}}));
+ if(b.length)b.push({h:"Totale per prodotto"},{t:{head:["Prodotto","Prodotti"],w:[4,1],rows:P.map((p,i)=>[nm(p),String(produced(i))]).filter(r=>r[1]!=="0")}});
+ return{title:"Produzione panettoni",sub,fn:"produzione-panettoni.pdf",b:b.length?b:[{p:"Nessuna produzione inserita."}]}}
+$("#prl").innerHTML=[["res","Resoconto finale"],["rit","Ritiri giorno per giorno"],["ord","Elenco ordini"],["prd","Produzione per data"]].map(a=>`<div class="prod"><div class="n"><b>${a[1]}</b></div><button class="btn s" data-a="rp" data-r="${a[0]}" data-m="v">Anteprima / Stampa</button><button class="btn s pri" data-a="rp" data-r="${a[0]}" data-m="p">Salva PDF</button></div>`).join("");
+$("#bj").onclick=async()=>{if(await savef("backup-panettoni-"+today()+".json",bk()))msg("Backup scaricato.")};
+$("#bc").onclick=async()=>{const q=s=>'"'+String(s??"").replace(/"/g,'""')+'"',h=["Nome","Cognome","Telefono","Data ritiro",...P.map(nm),"Pezzi ritirati","Totale €","Versato €","Saldo €"];
+ const rows=D.orders.slice().sort((a,b)=>srt(a.data,b.data)).map(o=>[o.nome,o.cognome,o.tel,o.data?fmt(o.data):"",...P.map((p,i)=>oq(o,i)||""),sr(o),tot(o),paid(o),tot(o)-paid(o)]);
+ if(await savef("ordini-panettoni-"+today()+".csv","\uFEFF"+[h,...rows].map(r=>r.map(q).join(";")).join("\r\n")))msg("File per Excel scaricato.")};
+$("#rest").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{const d=JSON.parse(await f.text());if(!await ask("Unire i dati del file a quelli presenti? Vengono aggiunte le voci mancanti e aggiornate quelle più recenti."))return;let n=0;
+ for(const c of["orders","prod","sales"]){if(db||RU){const ex=new Set(D[c].map(key));for(const o of d[c]||[]){if(ex.has(key(o)))continue;const x={...o};delete x.id;await put(c,x);n++}}else for(const o of d[c]||[]){if(!o.id){if(D[c].some(x=>key(x)===key(o)))continue;o.id=c[0]+Date.now()+Math.random().toString(36).slice(2,6)}const i=D[c].findIndex(x=>x.id===o.id);if(i<0){D[c].push(o);n++}else if((o.upd||0)>(D[c][i].upd||0)){D[c][i]=o;n++}}}if(!db&&!RU){save();render()}msg("Unite "+n+" voci.")}catch(err){msg("File non valido.")}};
+steps("#fo","o");steps("#fs","s");steps("#fx","x");resetO();resetP();render();
+window.addEventListener("unhandledrejection",()=>msg("Operazione non riuscita: riprova."));
+const ss=v=>JSON.stringify(v,(k,x)=>x&&typeof x==="object"&&!Array.isArray(x)?Object.fromEntries(Object.entries(x).sort()):x);
+function normO(o){const a=v=>Array.isArray(v)?v:v&&typeof v==="object"?P.map((p,i)=>v[i]||0):v;if(o.q)o.q=a(o.q);if(o.r)o.r=a(o.r);if(o.pay&&!Array.isArray(o.pay))o.pay=Object.values(o.pay);return o}
+const canon=a=>ss(a.map(x=>normO({...x})).sort((x,y)=>x.id<y.id?-1:1)),CC=["orders","prod","sales"];
+let first=true;
+async function poll(){if(!RU||pend||Date.now()-lastW<1500)return;
+ try{const r=await fetch(RU+"/.json");if(!r.ok)throw 0;const d=await r.json()||{};if(pend||Date.now()-lastW<1500)return;
+  const S={};for(const c of CC)S[c]=Object.entries(d[c]||{}).map(([id,v])=>normO({...v,id}));
+  if(first){first=false;let prev="";try{prev=localStorage.getItem("panettoni-conn")||""}catch(e){}
+   if(prev!==RU){const loc={};let n=0;for(const c of CC){loc[c]=D[c].filter(x=>!S[c].some(y=>y.id===x.id));n+=loc[c].length}
+    if(n&&await ask(`Su questo dispositivo ci sono <b>${n}</b> voci non presenti nell’archivio condiviso. Le carico?<br><span class="meta">Se annulli, saranno sostituite dai dati dell’archivio.</span>`,"Carica")){for(const c of CC)for(const x of loc[c]){const{id,...b}=x;await rq("PUT",c+"/"+id,b);S[c].push(x)}}
+    try{localStorage.setItem("panettoni-conn",RU)}catch(e){}}}
+  let ch=0;for(const c of CC)if(canon(S[c])!==canon(D[c])){D[c]=S[c];ch=1}
+  if(ch){save();render()}
+  $("#status").textContent="Archivio condiviso collegato · aggiornato alle "+new Date().toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"})}
+ catch(e){$("#status").textContent="Archivio condiviso non raggiungibile: controlla connessione e indirizzo."}}
+function startRemote(u){const x=rurl(u);if(!x)return false;RU=x;first=true;try{localStorage.setItem("panettoni-url",x)}catch(e){}$("#aurl").value=x;$("#alink").value=location.href.split("#")[0]+"#db="+encodeURIComponent(x);$("#status").textContent="Collegamento all’archivio…";poll();return true}
+$("#aconn").onclick=()=>{if(!startRemote($("#aurl").value))msg("Indirizzo non valido: deve essere quello del database Firebase (https://…firebasedatabase.app o …firebaseio.com).")};
+$("#adis").onclick=async()=>{if(await ask("Scollegare questo dispositivo dall’archivio condiviso? I dati restano salvati qui.")){RU=null;try{localStorage.removeItem("panettoni-url")}catch(e){}$("#alink").value="";$("#status").textContent="Modalità locale.";msg("Scollegato.")}};
+$("#acopy").onclick=async()=>{const v=$("#alink").value;if(!v)return msg("Collega prima l’archivio.");try{await navigator.clipboard.writeText(v);msg("Link copiato.")}catch(e){$("#alink").select();msg("Seleziona il testo e copialo.")}};
+setInterval(poll,4000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)poll()});
+load();render();
+const hu=(location.hash.match(/db=([^&]+)/)||[])[1];let u0="";try{u0=hu?decodeURIComponent(hu):""}catch(e){}try{u0=u0||localStorage.getItem("panettoni-url")||""}catch(e){}
+if(!(u0&&startRemote(u0)))$("#status").textContent="Modalità locale: collega l’archivio condiviso dalla sezione Condividi per lavorare in più persone.";
+if(hu)history.replaceState(null,"",location.pathname+location.search);
+</script></body></html>
